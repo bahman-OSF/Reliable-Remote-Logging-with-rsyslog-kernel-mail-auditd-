@@ -1,40 +1,35 @@
 #### This project demonstrates how to reliably forward logs from a source Ubuntu VM to a destination Ubuntu VM using rsyslog over TCP, with disk-assisted queues.
+#### auditd, kernel, dpkg, authentication logs are sent from source machine to destination machine. what you have to do is to change 1.1.1.1 destination IP address and 2.2.2.2 source IP address with yours
 
 #### Implementation of the porject step by step:
 
 1. Installation of required packages (both machines):
    ``` bash
    sudo apt update
-   sudo apt install -y rsyslog auditd
+   sudo apt install -y rsyslog auditd audispd-plugins
 
-   sudo systemctl enable auditd
-   sudo systemctl start auditd
-
-2. On destination machine, run the following command to enable TCP reception:
+2. On destination machine, copy the following files which are configuration files for rsyslog service on the machine:
    ``` bash
-   cp destination-VM/00-tcp-listener.conf /etc/rsyslog.d/00-tcp-listener.conf
+   cp destination-VM/20-remote-input.conf /etc/rsyslog.d
+   cp destination-VM/30* /etc/rsyslog.d
 
-3. Use the following config files on destination machine:
+3. On source machine, copy the following files to configure rsyslog service on the machine:
    ``` bash
-   cp destination-VM/10-remote-kernel-json.conf /etc/rsyslog.d/10-remote-kernel-json.conf
-   cp destination-VM/20-remote-mail-json.conf /etc/rsyslog.d/20-remote-mail-json.conf
-   cp destination-VM/30-remote-audit-json.conf /etc/rsyslog.d/30-remote-audit-json.conf
+   cp source-VM/10-imfile-load.conf /etc/rsyslog.d
+   cp source-VM/20* /etc/rsyslog.d
+   cp source-VM/30* /etc/rsyslog.d
 
-4. Use the following config files on source machine (in 60-forward-reliable.conf file change the IP address of destination machine with yours):
+5. Start and enable the services on both machines:
    ``` bash
-   cp source-VM/30-auditd.conf /etc/rsyslog.d/30-auditd.conf
-   cp source-VM/60-forward-reliable.conf /etc/rsyslog.d/60-forward-reliable.conf
-   cp source-VM/100-postfix.conf /etc/rsyslog.d/100-postfix.conf
-
-5. Restart rsyslog service on both machines:
-   ``` bash
-   systemctl restart rsyslog.service
+   systemctl enable --now rsyslog.service
+   systemctl enable --now auditd.service
 
 6. Verify log delivery (in these directories on destination machine a file generated named DESTINATION_MACHINE_IP.json containing delivered logs):
    ``` bash
-   ls /var/log/remote/kernel/
-   ls /var/log/remote/mail/
-   ls /var/log/remote/audit/
+   ls /var/log/remote-auditd/
+   ls /var/log/remote-auth/
+   ls /var/log/remote-dpkg/
+   ls /var/log/remote-kern/
 
 
    
