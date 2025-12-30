@@ -1,7 +1,7 @@
 #### This project demonstrates how to reliably forward logs from a source Ubuntu VM to a destination Ubuntu VM using rsyslog over TCP, with disk-assisted queues.
-#### Auditd, kernel, dpkg, authentication logs are sent from source machine to destination machine. what you have to do is to change 1.1.1.1 source IP address and 2.2.2.2 destination IP address with yours
+#### Auditd, kernel, dpkg, authentication logs are sent from the source machine to the destination machine. what you have to do is to change 1.1.1.1 source IP address and 2.2.2.2 destination IP address with yours
 
-#### To use the bash script, you need to clone the project on source machine and run the script.
+#### To use the bash script, you need to clone the project on the source machine and run the script.
 
 #### Implementation of the porject step by step:
 
